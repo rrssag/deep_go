@@ -9,7 +9,7 @@ import (
 
 // go test -v homework_test.go
 
-func ToLittleEndian(number uint32) uint32 {
+func ToLittleEndian[T uint64 | uint32 | uint16](number T) T {
 	ptr := unsafe.Pointer(&number)
 	byteCount := int(unsafe.Sizeof(number))
 
