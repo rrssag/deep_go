@@ -7,24 +7,30 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type ValueType interface {
+	int | int8 | int16 | int32 | int64
+}
+
+type Values[T ValueType] []T
+
 // go test -v homework_test.go
 
-type CircularQueue struct {
-	values          []int
+type CircularQueue[T ValueType] struct {
+	values          []T
 	elementsInQueue int
 	pointerStart    int
 	pointerEnd      int
 }
 
-func NewCircularQueue(size int) CircularQueue {
-	return CircularQueue{
-		values:       make([]int, size),
+func NewCircularQueue[T ValueType](size T) *CircularQueue[T] {
+	return &CircularQueue[T]{
+		values:       make(Values[T], size),
 		pointerStart: 0,
 		pointerEnd:   -1,
 	}
 }
 
-func (q *CircularQueue) Push(value int) bool {
+func (q *CircularQueue[T]) Push(value T) bool {
 	if q.Full() {
 		return false
 	}
@@ -36,7 +42,7 @@ func (q *CircularQueue) Push(value int) bool {
 	return true
 }
 
-func (q *CircularQueue) Pop() bool {
+func (q *CircularQueue[T]) Pop() bool {
 	if q.Empty() {
 		return false
 	}
@@ -48,7 +54,7 @@ func (q *CircularQueue) Pop() bool {
 	return true
 }
 
-func (q *CircularQueue) Front() int {
+func (q *CircularQueue[T]) Front() T {
 	if q.Empty() {
 		return -1
 	}
@@ -56,7 +62,7 @@ func (q *CircularQueue) Front() int {
 	return q.values[q.pointerStart]
 }
 
-func (q *CircularQueue) Back() int {
+func (q *CircularQueue[T]) Back() T {
 	if q.Empty() {
 		return -1
 	}
@@ -64,15 +70,15 @@ func (q *CircularQueue) Back() int {
 	return q.values[q.pointerEnd]
 }
 
-func (q *CircularQueue) Empty() bool {
+func (q *CircularQueue[T]) Empty() bool {
 	return q.elementsInQueue == 0
 }
 
-func (q *CircularQueue) Full() bool {
+func (q *CircularQueue[T]) Full() bool {
 	return q.elementsInQueue == cap(q.values)
 }
 
-func (q *CircularQueue) incEndPointer() {
+func (q *CircularQueue[T]) incEndPointer() {
 	if q.pointerEnd == cap(q.values)-1 {
 		q.pointerEnd = 0
 		return
@@ -81,7 +87,7 @@ func (q *CircularQueue) incEndPointer() {
 	q.pointerEnd++
 }
 
-func (q *CircularQueue) incStartPointer() {
+func (q *CircularQueue[T]) incStartPointer() {
 	if q.pointerStart == cap(q.values)-1 {
 		q.pointerStart = 0
 		return
