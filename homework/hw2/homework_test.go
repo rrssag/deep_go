@@ -7,24 +7,24 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type ValueType interface {
+type valueType interface {
 	int | int8 | int16 | int32 | int64
 }
 
-type Values[T ValueType] []T
+type values[T valueType] []T
 
 // go test -v homework_test.go
 
-type CircularQueue[T ValueType] struct {
+type CircularQueue[T valueType] struct {
 	values          []T
 	elementsInQueue int
 	pointerStart    int
 	pointerEnd      int
 }
 
-func NewCircularQueue[T ValueType](size T) *CircularQueue[T] {
+func NewCircularQueue[T valueType](size T) *CircularQueue[T] {
 	return &CircularQueue[T]{
-		values:       make(Values[T], size),
+		values:       make(values[T], size),
 		pointerStart: 0,
 		pointerEnd:   -1,
 	}
