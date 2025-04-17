@@ -26,7 +26,7 @@ func NewCircularQueue[T valueType](size T) *CircularQueue[T] {
 	return &CircularQueue[T]{
 		values:       make(values[T], size),
 		pointerStart: 0,
-		pointerEnd:   -1,
+		pointerEnd:   0,
 	}
 }
 
@@ -35,7 +35,10 @@ func (q *CircularQueue[T]) Push(value T) bool {
 		return false
 	}
 
-	q.incEndPointer()
+	if !q.Empty() {
+		q.incEndPointer()
+	}
+
 	q.values[q.pointerEnd] = value
 	q.elementsInQueue++
 
