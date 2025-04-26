@@ -2,6 +2,7 @@ package main
 
 import (
 	"reflect"
+	"runtime"
 	"slices"
 	"sync/atomic"
 	"testing"
@@ -16,18 +17,31 @@ type COWBuffer struct {
 }
 
 func NewCOWBuffer(data []byte) COWBuffer {
-	return COWBuffer{
+	buff := COWBuffer{
 		data:       data,
 		refCounter: new(int32),
 	}
+
+	runtime.SetFinalizer(&buff, func(b *COWBuffer) {
+		b.Close()
+	})
+
+	return buff
 }
 
 func (b *COWBuffer) Clone() COWBuffer {
 	atomic.AddInt32(b.refCounter, 1)
-	return COWBuffer{
+
+	newBuff := COWBuffer{
 		data:       unsafe.Slice(unsafe.SliceData(b.data), len(b.data)),
 		refCounter: b.refCounter,
 	}
+
+	runtime.SetFinalizer(&newBuff, func(b *COWBuffer) {
+		b.Close()
+	})
+
+	return newBuff
 }
 
 func (b *COWBuffer) Close() {
